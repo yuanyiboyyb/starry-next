@@ -36,6 +36,16 @@ basic_testlist=(
     "/$LIBC/basic/brk"
     "/$LIBC/basic/chdir"
     "/$LIBC/basic/clone"
+    "/$LIBC/basic/getpid"
+    "/$LIBC/basic/getppid"
+    "/$LIBC/basic/exit"
+    "/$LIBC/basic/wait"
+    "/$LIBC/basic/execve"
+    "/$LIBC/basic/waitpid"
+    "/$LIBC/basic/yield"
+    "/$LIBC/basic/gettimeofday"
+    "/$LIBC/basic/sleep"
+    "/$LIBC/basic/times"
 )
 busybox_testlist=("/$LIBC/busybox sh /$LIBC/busybox_testcode.sh")
 iozone_testlist=("/$LIBC/busybox sh /$LIBC/iozone_testcode.sh")
