@@ -452,16 +452,16 @@ target_testcases = [
     "test_brk",
     "test_chdir",
     "test_clone",
-    "getpid",
-    "getppid",
-    "exit",
-    "wait",
-    "execve",
-    "waitpid",
-    "yield",
-    "gettimeofday",
-    "sleep",
-    "times"
+    "test_getpid",
+    "test_getppid",
+    "test_exit",
+    "test_wait",
+    "test_execve",
+    "test_waitpid",
+    "test_yield",
+    "test_gettimeofday",
+    "test_sleep",
+    "test_times"
 ]
 
 if __name__ == '__main__':
@@ -504,7 +504,7 @@ if __name__ == '__main__':
                 # test_name = line.replace("=", '').replace(" ", "").replace("START", "")
                 continue
             # 测试样例中间
-            data.append(line)
+            data.append(line.replace('\n', '').replace('\r', ''))
     test_results = [x.get_result() for x in runner.values()]
     for x in runner.values():
         result = x.get_result()
