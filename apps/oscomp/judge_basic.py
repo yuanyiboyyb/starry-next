@@ -450,8 +450,8 @@ def get_runner(name):
 # TODO: Add more commands to test here
 target_testcases = [
     "test_brk",
-    "test_chdir",
-    "test_execve",
+    "test_mmap",
+    "test_munmap",
 ]
 
 if __name__ == '__main__':

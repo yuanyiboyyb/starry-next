@@ -1,1 +1,4 @@
-/musl/busybox sh /musl/libctest_testcode.sh
+/musl/basic/brk
+/musl/basic/mmap
+/musl/basic/munmap
+
