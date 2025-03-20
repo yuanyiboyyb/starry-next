@@ -1,5 +1,7 @@
 /.vscode
 /.arceos
+/.arceos1
+/.arceos1-1
 /.cargo
 .DS_Store
 *.elf
@@ -18,3 +20,4 @@ apps/*/build/
 /aarch64-linux-musl-cross
 /gcc-13.2.0-loongarch64-linux-gnu
 /musl-loongarch64-1.2.2
+/apps/tests
