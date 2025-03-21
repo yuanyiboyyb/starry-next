@@ -1,13 +1,1 @@
-/musl/basic/brk
-/musl/basic/chdir
-/musl/basic/clone
-/musl/basic/getpid
-/musl/basic/getppid
-/musl/basic/exit
-/musl/basic/wait
-/musl/basic/execve
-/musl/basic/waitpid
-/musl/basic/yield
-/musl/basic/gettimeofday
-/musl/basic/sleep
-/musl/basic/times
+/musl/runtest.exe -w entry-static.exe argv
