@@ -1,4 +1,1 @@
-/musl/basic/brk
-/musl/basic/mmap
-/musl/basic/munmap
-
+/musl/runtest.exe entry-static.exe argv
