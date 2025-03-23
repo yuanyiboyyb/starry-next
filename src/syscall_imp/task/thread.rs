@@ -279,3 +279,7 @@ pub fn sys_prlimit64(
 
     Ok(0)
 }
+
+pub fn sys_gettid() -> LinuxResult<isize> {
+    Ok(current().id().as_u64() as isize)
+}
