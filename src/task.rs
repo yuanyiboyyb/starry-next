@@ -352,7 +352,7 @@ pub fn exec(name: &str, args: &[String], envs: &[String]) -> AxResult<()> {
     let current_task = current();
 
     let program_name = name.to_string();
-    
+
     let mut aspace = current_task.task_ext().aspace.lock();
     if Arc::strong_count(&current_task.task_ext().aspace) != 1 {
         warn!("Address space is shared by multiple tasks, exec is not supported.");
