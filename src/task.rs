@@ -351,13 +351,8 @@ pub fn wait_pid(pid: i32, exit_code_ptr: *mut i32) -> Result<u64, WaitStatus> {
 pub fn exec(name: &str, args: &[String], envs: &[String]) -> AxResult<()> {
     let current_task = current();
 
-    // let program_name = name.to_string();
-    let program_name;
-    if name == "test_echo"{
-        program_name = "./musl/basic/test_echo".to_string();
-    }else{
-        program_name = name.to_string();
-    }
+    let program_name = name.to_string();
+    
     let mut aspace = current_task.task_ext().aspace.lock();
     if Arc::strong_count(&current_task.task_ext().aspace) != 1 {
         warn!("Address space is shared by multiple tasks, exec is not supported.");
