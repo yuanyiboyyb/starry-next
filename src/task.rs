@@ -362,8 +362,6 @@ pub fn exec(name: &str, args: &[String], envs: &[String]) -> AxResult<()> {
     aspace.unmap_user_areas()?;
     axhal::arch::flush_tlb(None);
 
-    // let args = vec![program_name.clone()];
-
     let (entry_point, user_stack_base) = crate::mm::load_user_app(&mut aspace, args, envs)
         .map_err(|_| {
             error!("Failed to load app {}", program_name);
