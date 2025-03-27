@@ -1,1 +1,4 @@
-/musl/runtest.exe -w entry-static.exe argv
+/musl/runtest.exe entry-static.exe argv
+/musl/runtest.exe entry-static.exe qsort
+/musl/runtest.exe entry-static.exe memmem_oob_read
+/musl/runtest.exe entry-static.exe string_strchr

@@ -87,6 +87,7 @@ impl TaskExt {
         _tls: usize,
         _ctid: usize,
     ) -> AxResult<u64> {
+        info!("clone task: flags={:#x}, stack={:?}", flags, stack);
         let _clone_flags = CloneFlags::from_bits((flags & !0x3f) as u32).unwrap();
 
         let mut new_task = TaskInner::new(
@@ -116,6 +117,7 @@ impl TaskExt {
         let trap_frame = read_trapframe_from_kstack(current_task.get_kernel_stack_top().unwrap());
         let mut new_uctx = UspaceContext::from(&trap_frame);
         if let Some(stack) = stack {
+            info!("clone task: stack={:#x}", stack);
             new_uctx.set_sp(stack);
         }
         // Skip current instruction
@@ -132,6 +134,7 @@ impl TaskExt {
         new_task_ext.ns_init_new();
         new_task.init_task_ext(new_task_ext);
         let new_task_ref = axtask::spawn_task(new_task);
+        info!("clone task: {} -> {}", current_task.id_name(), new_task_ref.id_name());
         current_task.task_ext().children.lock().push(new_task_ref);
         Ok(return_id)
     }
@@ -301,7 +304,7 @@ pub fn wait_pid(pid: i32, exit_code_ptr: *mut i32) -> Result<u64, WaitStatus> {
     let mut exit_task_id: usize = 0;
     let mut answer_id: u64 = 0;
     let mut answer_status = WaitStatus::NotExist;
-
+    info!("wait pid _{}_ with exit_code_ptr _{:?}_", pid, exit_code_ptr);
     for (index, child) in curr_task.task_ext().children.lock().iter().enumerate() {
         if pid <= 0 {
             if pid == 0 {
