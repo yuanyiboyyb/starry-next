@@ -1,56 +1,11 @@
-mod fs;
-mod mm;
-mod signal;
-mod sys;
-mod task;
-mod utils;
-
-use crate::task::{time_stat_from_kernel_to_user, time_stat_from_user_to_kernel};
 use axerrno::{LinuxError, LinuxResult};
 use axhal::{
     arch::TrapFrame,
     trap::{SYSCALL, register_trap_handler},
 };
+use starry_api::*;
+use starry_core::task::{time_stat_from_kernel_to_user, time_stat_from_user_to_kernel};
 use syscalls::Sysno;
-
-use self::fs::*;
-use self::mm::*;
-use self::signal::*;
-use self::sys::*;
-use self::task::*;
-use self::utils::*;
-
-macro_rules! syscall_instrument {(
-    $( #[$attr:meta] )*
-    $pub:vis
-    fn $fname:ident (
-        $( $arg_name:ident : $ArgTy:ty ),* $(,)?
-    ) -> $RetTy:ty
-    $body:block
-) => (
-    $( #[$attr] )*
-    #[allow(unused_parens)]
-    $pub
-    fn $fname (
-        $( $arg_name : $ArgTy ),*
-    ) -> $RetTy
-    {
-        /// Re-emit the original function definition, but as a scoped helper
-        $( #[$attr] )*
-        fn __original_func__ (
-            $($arg_name: $ArgTy),*
-        ) -> $RetTy
-        $body
-
-        let res = __original_func__($($arg_name),*);
-        match res {
-            Ok(_) | Err(axerrno::LinuxError::EAGAIN) => debug!(concat!(stringify!($fname), " => {:?}"),  res),
-            Err(_) => info!(concat!(stringify!($fname), " => {:?}"), res),
-        }
-        res
-    }
-)}
-pub(crate) use syscall_instrument;
 
 #[register_trap_handler(SYSCALL)]
 fn handle_syscall(tf: &TrapFrame, syscall_num: usize) -> isize {
@@ -111,6 +66,14 @@ fn handle_syscall(tf: &TrapFrame, syscall_num: usize) -> isize {
         Sysno::unlinkat => sys_unlinkat(tf.arg0() as _, tf.arg1().into(), tf.arg2() as _),
         Sysno::uname => sys_uname(tf.arg0().into()),
         Sysno::fstat => sys_fstat(tf.arg0() as _, tf.arg1().into()),
+        Sysno::mount => sys_mount(
+            tf.arg0().into(),
+            tf.arg1().into(),
+            tf.arg2().into(),
+            tf.arg3() as _,
+            tf.arg4().into(),
+        ) as _,
+        Sysno::umount2 => sys_umount2(tf.arg0().into(), tf.arg1() as _) as _,
         #[cfg(target_arch = "x86_64")]
         Sysno::newfstatat => sys_fstatat(
             tf.arg0() as _,

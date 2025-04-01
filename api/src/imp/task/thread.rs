@@ -5,12 +5,14 @@ use axerrno::{LinuxError, LinuxResult};
 use axtask::{current, yield_now, TaskExtMut, TaskExtRef};
 use macro_rules_attribute::apply;
 use num_enum::TryFromPrimitive;
+use starry_core::{
+    ctypes::{WaitFlags, WaitStatus},
+    task::{exec, wait_pid},
+};
 
 use crate::{
-    ctypes::{WaitFlags, WaitStatus, RLimit, RLIMIT_AS, RLIMIT_NOFILE, RLIMIT_STACK},
     ptr::{PtrWrapper, UserConstPtr, UserPtr},
-    syscall_imp::syscall_instrument,
-    task::wait_pid,
+    syscall_instrument,
 };
 
 /// ARCH_PRCTL codes
@@ -146,8 +148,12 @@ pub fn sys_wait4(pid: i32, exit_code_ptr: UserPtr<i32>, option: u32) -> LinuxRes
     let exit_code_ptr = exit_code_ptr.nullable(UserPtr::get)?;
     info!("wait4: pid: {}, exit_code_ptr: {:?}, option: {}", pid, exit_code_ptr, option);
     loop {
+<<<<<<< HEAD:src/syscall_imp/task/thread.rs
         let answer = wait_pid(pid, exit_code_ptr.unwrap_or_else(ptr::null_mut));
         info!("wait4: answer: {:?}", answer);
+=======
+        let answer = unsafe { wait_pid(pid, exit_code_ptr.unwrap_or_else(ptr::null_mut)) };
+>>>>>>> main:api/src/imp/task/thread.rs
         match answer {
             Ok(pid) => {
                 return Ok(pid as isize);
@@ -203,7 +209,7 @@ pub fn sys_execve(
         path_str, args, envs
     );
 
-    if let Err(e) = crate::task::exec(path_str, &args, &envs) {
+    if let Err(e) = exec(path_str, &args, &envs) {
         error!("Failed to exec: {:?}", e);
         return Err::<isize, _>(LinuxError::ENOSYS);
     }
