@@ -6,7 +6,7 @@ use axtask::{current, yield_now, TaskExtMut, TaskExtRef};
 use macro_rules_attribute::apply;
 use num_enum::TryFromPrimitive;
 use starry_core::{
-    ctypes::{WaitFlags, WaitStatus},
+    ctypes::{WaitFlags, WaitStatus, RLimit, RLIMIT_AS, RLIMIT_NOFILE, RLIMIT_STACK},
     task::{exec, wait_pid},
 };
 
@@ -148,12 +148,7 @@ pub fn sys_wait4(pid: i32, exit_code_ptr: UserPtr<i32>, option: u32) -> LinuxRes
     let exit_code_ptr = exit_code_ptr.nullable(UserPtr::get)?;
     info!("wait4: pid: {}, exit_code_ptr: {:?}, option: {}", pid, exit_code_ptr, option);
     loop {
-<<<<<<< HEAD:src/syscall_imp/task/thread.rs
-        let answer = wait_pid(pid, exit_code_ptr.unwrap_or_else(ptr::null_mut));
-        info!("wait4: answer: {:?}", answer);
-=======
         let answer = unsafe { wait_pid(pid, exit_code_ptr.unwrap_or_else(ptr::null_mut)) };
->>>>>>> main:api/src/imp/task/thread.rs
         match answer {
             Ok(pid) => {
                 return Ok(pid as isize);
@@ -291,29 +286,4 @@ pub fn sys_prlimit64(
 #[apply(syscall_instrument)]
 pub fn sys_gettid() -> LinuxResult<isize> {
     Ok(current().id().as_u64() as isize)
-}
-
-#[apply(syscall_instrument)]
-pub fn sys_fork() -> LinuxResult<isize> {
-    info!("fork");
-    info!("transfer to clone");
-    // let flags = 17;
-    // let user_stack = 0;
-    // let ptid = 0;
-    // let arg3 = 0;
-    // let arg4 = 0;
-    // sys_clone(flags, user_stack, ptid, arg3, arg4)
-    let stack = None;
-
-    let curr_task = current();
-
-    if let Ok(new_task_id) = curr_task
-        .task_ext()
-        .clone_task(17, stack, 0, 0, 0)
-    {
-        info!("fork: new_task_id: {}", new_task_id);
-        Ok(new_task_id as isize)
-    } else {
-        Err(LinuxError::ENOMEM)
-    }
 }

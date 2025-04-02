@@ -3,6 +3,9 @@ import sys
 
 # TODO: Add more commands to test here
 libctest_baseline = """
+========== START entry-static.exe argv ==========
+Pass!
+========== END entry-static.exe argv ==========
 ========== START entry-static.exe qsort ==========
 Pass!
 ========== END entry-static.exe qsort ==========
@@ -12,11 +15,12 @@ def parse_libctest(output):
     ans = {}
     key = ""
     for line in output.split("\n"):
+        line = line.replace('\n', '').replace('\r', '')
         if "START entry-static.exe" in line:
             key = "libctest static " + line.split(" ")[3]
         elif "START entry-dynamic.exe" in line:
             key = "libctest dynamic " + line.split(" ")[3]
-        if (line == "Pass!" or line == "Pass!\r") and key != "":
+        if (line == "Pass!") and key != "":
             ans[key] = 1
     return ans
 

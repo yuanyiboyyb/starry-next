@@ -69,7 +69,24 @@ busybox_testlist=("/$LIBC/busybox sh /$LIBC/busybox_testcode.sh")
 iozone_testlist=("/$LIBC/busybox sh /$LIBC/iozone_testcode.sh")
 lua_testlist=("/$LIBC/busybox sh /$LIBC/lua_testcode.sh")
 # libctest_testlist=("/$LIBC/busybox sh /$LIBC/libctest_testcode.sh")
-libctest_testlist=("/musl/runtest.exe -w entry-static.exe qsort")
+libctest_testlist=(
+    "/$LIBC/runtest.exe -w entry-static.exe argv"
+    "/$LIBC/runtest.exe -w entry-static.exe qsort"
+    # "/$LIBC/runtest.exe -w entry-static.exe memmem_oob_read"
+    # "/$LIBC/runtest.exe -w entry-static.exe string_strchr"
+    # "/$LIBC/runtest.exe -w entry-static.exe ungetc"
+    # "/$LIBC/runtest.exe -w entry-static.exe statvfs_syscall_list"
+    # "/$LIBC/runtest.exe -w entry-static.exe strtod"
+    # "/$LIBC/runtest.exe -w entry-static.exe wcsncpy_read_overflow_syscall_list"
+    # "/$LIBC/runtest.exe -w entry-static.exe regex_backref_0_syscall_list"
+    # "/$LIBC/runtest.exe -w entry-static.exe sigprocmask_internal_syscall_list"
+    # "/$LIBC/runtest.exe -w entry-static.exe setvbuf_unget_syscall_list"
+    # "/$LIBC/runtest.exe -w entry-static.exe iswspace_null"
+    # "/$LIBC/runtest.exe -w entry-static.exe scanf_nullbyte_char_syscall_list"
+    # "/$LIBC/runtest.exe -w entry-static.exe memmem_oob"
+    # "/$LIBC/runtest.exe -w entry-static.exe malloc_0"
+    # "/$LIBC/runtest.exe -w entry-static.exe wcsstr_false_negative_syscall_list"
+)
 
 testcases_type=(
     "basic"

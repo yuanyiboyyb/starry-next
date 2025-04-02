@@ -106,7 +106,10 @@ impl TaskExt {
             current().id_name(),
             axconfig::plat::KERNEL_STACK_SIZE,
         );
-
+        #[cfg(any(target_arch = "x86_64", target_arch = "aarch64"))]
+        unsafe {
+            new_task.ctx_mut().set_tls(axhal::arch::read_thread_pointer().into());
+        }
         let current_task = current();
         let mut current_aspace = current_task.task_ext().aspace.lock();
         let mut new_aspace = current_aspace.clone_or_err()?;
@@ -205,11 +208,11 @@ impl TaskExt {
         self.heap_top.store(top, Ordering::Release)
     }
 
-    pub(crate) fn get_stack_size(&self) -> u64 {
+    pub fn get_stack_size(&self) -> u64 {
         self.stack_size.load(Ordering::Acquire)
     }
 
-    pub(crate) fn set_stack_size(&self, size: u64) {
+    pub fn set_stack_size(&self, size: u64) {
         self.stack_size.store(size, Ordering::Release)
     }
 }
