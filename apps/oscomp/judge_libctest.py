@@ -6,12 +6,16 @@ libctest_baseline = """
 ========== START entry-static.exe argv ==========
 Pass!
 ========== END entry-static.exe argv ==========
+========== START entry-static.exe fdopen ==========
+Pass!
+========== END entry-static.exe fdopen ==========
 """
 
 def parse_libctest(output):
     ans = {}
     key = ""
     for line in output.split("\n"):
+        line = line.replace('\n', '').replace('\r', '')
         if "START entry-static.exe" in line:
             key = "libctest static " + line.split(" ")[3]
         elif "START entry-dynamic.exe" in line:
