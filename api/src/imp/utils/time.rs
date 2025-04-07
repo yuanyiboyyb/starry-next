@@ -1,7 +1,7 @@
 use arceos_posix_api::{self as api, ctypes::timeval};
 use axerrno::LinuxResult;
-use axhal::time::{monotonic_time_nanos, nanos_to_ticks};
-use starry_core::{ctypes::Tms, task::time_stat_output};
+use axhal::time::{monotonic_time_nanos, nanos_to_ticks, NANOS_PER_SEC};
+use starry_core::{ctypes::Tms, task::time_stat_output, ctypes::SysInfo};
 
 use crate::ptr::{PtrWrapper, UserPtr};
 
@@ -24,4 +24,34 @@ pub fn sys_times(tms: UserPtr<Tms>) -> LinuxResult<isize> {
         }
     }
     Ok(nanos_to_ticks(monotonic_time_nanos()) as _)
+}
+
+/// get the system uptime and memory information.
+/// # Arguments
+/// * `info` - *mut SysInfo
+pub fn sys_sysinfo(sysinfo: UserPtr<SysInfo>) -> LinuxResult<isize> {
+    // let sysinfo = sysinfo.address().as_mut_ptr();
+    // check if the pointer is valid
+    // if sysinfo.is_null() {
+    //     return Err(axerrno::LinuxError::EFAULT);
+    // }
+    // get the system uptime
+    unsafe {
+        *sysinfo.get()? = SysInfo {
+            uptime: (monotonic_time_nanos() / NANOS_PER_SEC) as isize,
+            loads: [0; 3],
+            totalram: 0,
+            freeram: 0,
+            sharedram: 0,
+            bufferram: 0,
+            totalswap: 0,
+            freeswap: 0,
+            procs: 0,
+            totalhigh: 0,
+            freehigh: 0,
+            mem_unit: 1,
+        };
+    }
+
+    Ok(0)
 }
