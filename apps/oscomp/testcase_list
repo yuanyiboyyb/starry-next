@@ -1,1 +1,2 @@
-
+/musl/runtest.exe -w entry-static.exe argv
+/musl/runtest.exe -w entry-static.exe qsort
