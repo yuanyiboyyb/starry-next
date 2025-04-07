@@ -2,11 +2,11 @@ use core::{ffi::c_char, ptr};
 
 use alloc::vec::Vec;
 use axerrno::{LinuxError, LinuxResult};
-use axtask::{current, yield_now, TaskExtMut, TaskExtRef};
+use axtask::{TaskExtMut, TaskExtRef, current, yield_now};
 use macro_rules_attribute::apply;
 use num_enum::TryFromPrimitive;
 use starry_core::{
-    ctypes::{WaitFlags, WaitStatus, RLimit, RLIMIT_AS, RLIMIT_NOFILE, RLIMIT_STACK},
+    ctypes::{RLIMIT_AS, RLIMIT_NOFILE, RLIMIT_STACK, RLimit, WaitFlags, WaitStatus},
     task::{exec, wait_pid},
 };
 
@@ -146,7 +146,10 @@ pub fn sys_clone(
 pub fn sys_wait4(pid: i32, exit_code_ptr: UserPtr<i32>, option: u32) -> LinuxResult<isize> {
     let option_flag = WaitFlags::from_bits(option).unwrap();
     let exit_code_ptr = exit_code_ptr.nullable(UserPtr::get)?;
-    info!("wait4: pid: {}, exit_code_ptr: {:?}, option: {}", pid, exit_code_ptr, option);
+    info!(
+        "wait4: pid: {}, exit_code_ptr: {:?}, option: {}", 
+        pid, exit_code_ptr, option
+    );
     loop {
         let answer = unsafe { wait_pid(pid, exit_code_ptr.unwrap_or_else(ptr::null_mut)) };
         match answer {
@@ -238,10 +241,7 @@ pub fn sys_prlimit64(
                 info!("RLIMIT_STACK");
                 // let new_limit = new_limit.get()?;
                 let old_limit_ptr = old_limit.address().as_ptr();
-                
-                info!("111");
                 let new_limit_ptr = new_limit.address().as_ptr();
-                info!("222");
                 // let old_limit = curr_process.task_ext().set_rlimit(RLIMIT_STACK, new_limit, old_limit);
                 // Ok(0)
                 // let mut stack_limit = curr_process
@@ -259,9 +259,7 @@ pub fn sys_prlimit64(
                 if new_limit_ptr as usize != 0 {
                     info!("RLIMIT_STACK: new_limit as usize != 0");
                     let new_limit = new_limit_ptr as *const RLimit;
-                    stack_limit = unsafe {
-                        (*new_limit).rlim_cur
-                    };
+                    stack_limit = unsafe { (*new_limit).rlim_cur };
                     task_ext.set_stack_size(stack_limit);
                 }
                 info!("RLIMIT_STACK: {}", stack_limit);
@@ -273,7 +271,7 @@ pub fn sys_prlimit64(
             //     Ok(0)
             // }
             // _ => Err(LinuxError::EINVAL),
-            _=> { }
+            _ => {}
         }
     } else {
         info!("sys_prlimit64 pid: {}, resource: {}", pid, resource);

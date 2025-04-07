@@ -108,7 +108,9 @@ impl TaskExt {
         );
         #[cfg(any(target_arch = "x86_64", target_arch = "aarch64"))]
         unsafe {
-            new_task.ctx_mut().set_tls(axhal::arch::read_thread_pointer().into());
+            new_task
+                .ctx_mut().
+                set_tls(axhal::arch::read_thread_pointer().into());
         }
         let current_task = current();
         let mut current_aspace = current_task.task_ext().aspace.lock();
@@ -146,7 +148,10 @@ impl TaskExt {
         new_task_ext.ns_init_new();
         new_task.init_task_ext(new_task_ext);
         let new_task_ref = axtask::spawn_task(new_task);
-        info!("clone task: {} -> {}", current_task.id_name(), new_task_ref.id_name());
+        info!(
+            "clone task: {} -> {}", current_task.id_name(), 
+            new_task_ref.id_name()
+        );
         current_task.task_ext().children.lock().push(new_task_ref);
         Ok(return_id)
     }
@@ -317,7 +322,10 @@ pub unsafe fn wait_pid(pid: i32, exit_code_ptr: *mut i32) -> Result<u64, WaitSta
     let mut exit_task_id: usize = 0;
     let mut answer_id: u64 = 0;
     let mut answer_status = WaitStatus::NotExist;
-    info!("wait pid _{}_ with exit_code_ptr _{:?}_", pid, exit_code_ptr);
+    info!(
+        "wait pid _{}_ with exit_code_ptr _{:?}_", 
+        pid, exit_code_ptr
+    );
     for (index, child) in curr_task.task_ext().children.lock().iter().enumerate() {
         if pid <= 0 {
             if pid == 0 {
