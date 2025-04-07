@@ -147,7 +147,7 @@ pub fn sys_wait4(pid: i32, exit_code_ptr: UserPtr<i32>, option: u32) -> LinuxRes
     let option_flag = WaitFlags::from_bits(option).unwrap();
     let exit_code_ptr = exit_code_ptr.nullable(UserPtr::get)?;
     info!(
-        "wait4: pid: {}, exit_code_ptr: {:?}, option: {}", 
+        "wait4: pid: {}, exit_code_ptr: {:?}, option: {}",
         pid, exit_code_ptr, option
     );
     loop {
